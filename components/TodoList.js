@@ -1,25 +1,63 @@
 import React from "react";
-import { FlatList, View, Text } from "react-native";
+import styled from "styled-components";
+import { Ionicons } from "@expo/vector-icons";
 
-const data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((no) => ({
-    id: `${no}`,
-    title: `해야할 일 ${no}`,
-    done: no % 2 === 0,
-}));
+const TouchableHighlight = styled.TouchableHighlight``;
 
-function Item({ item }) {
+const ItemView = styled.View`
+    flex-direction: row;
+    padding: 10px;
+    border-bottom-color: #eee;
+    border-bottom-width: 1px;
+
+    align-items: center;
+`;
+
+const Text = styled.Text`
+    margin-left: 10px;
+    color: ${(props) => (props.done ? "#aaa" : "#000")};
+`;
+
+function Item({ item, onToggle }) {
     return (
-        <View>
-            <Text>{item.title}</Text>
-        </View>
+        <TouchableHighlight
+            activeOpacity={0.6}
+            underlayColor="#DDDDDD"
+            onPress={() => {
+                onToggle(item.id);
+            }}
+        >
+            <ItemView>
+                {item.done && (
+                    <Ionicons
+                        name="ios-checkmark-circle-outline"
+                        size={24}
+                        color="#aaa"
+                    />
+                )}
+                {!item.done && (
+                    <Ionicons
+                        name="ios-radio-button-off"
+                        size={24}
+                        color="black"
+                    />
+                )}
+                <Text done={item.done}>{item.title}</Text>
+            </ItemView>
+        </TouchableHighlight>
     );
 }
 
-export default function TodoList() {
+const FlatList = styled.FlatList`
+    background-color: #fff;
+    width: 100%;
+`;
+
+export default function TodoList({ data, onToggle }) {
     return (
         <FlatList
             data={data}
-            renderItem={({ item }) => <Item item={item} />}
+            renderItem={({ item }) => <Item item={item} onToggle={onToggle} />}
             keyExtractor={(item) => item.id}
         />
     );
